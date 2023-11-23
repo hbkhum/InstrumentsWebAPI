@@ -12,10 +12,7 @@ public class Test
     public string Description { get; set; }
     public int Sequence { get; set; }
     public string LowLimit { get; set; }
-    public string Result { get; set; }
     public string HighLimit { get; set; }
-    public bool Status { get; set; }
-
     public Guid GroupTestId { get; set; }
     public GroupTest GroupTest { get; set; }
 }

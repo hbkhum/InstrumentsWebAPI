@@ -16,9 +16,14 @@ namespace WebAPI.Data
                 .HasOne(t => t.GroupTest)
                 .WithMany(g => g.Tests)
                 .HasForeignKey(t => t.GroupTestId);
+
+            //modelBuilder.Entity<TestResult>()
+            //    .HasOne(tr => tr.Test)
+            //    .WithOne(t => t.GroupTestId)
         }
 
         public DbSet<Test> Tests { get; set; }
         public DbSet<GroupTest> GroupTests { get; set; }
+        public DbSet<TestResult> TestResults { get; set; }
     }
 }

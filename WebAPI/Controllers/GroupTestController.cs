@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebAPI.Data;
+using WebAPI.DTO;
 using WebAPI.Models;
 
 namespace WebAPI.Controllers
@@ -27,13 +28,32 @@ namespace WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var GroupTest = await _context.GroupTests.FirstOrDefaultAsync(t => t.GroupTestId == id);
-            if (GroupTest == null)
+            var groupTest = await _context.GroupTests.Include(t => t.Tests)
+                .FirstOrDefaultAsync(t => t.GroupTestId == id);
+
+            if (groupTest == null)
             {
                 return NotFound();
             }
 
-            return Ok(GroupTest);
+            var groupTestDto = new GroupTestDto
+            {
+                GroupTestId = groupTest.GroupTestId,
+                Name = groupTest.Name,
+                Description = groupTest.Description,
+                Sequence = groupTest.Sequence,
+                Tests = groupTest?.Tests.Select(test => new TestDto
+                {
+                    TestId = test.TestId,
+                    Name = test.Name,
+                    Description = test.Description,
+                    Sequence = test.Sequence,
+                    LowLimit = test.LowLimit,
+                    HighLimit = test.HighLimit
+                }).ToList()
+            };
+
+            return Ok(groupTestDto);
         }
 
         [HttpPost]
@@ -48,16 +68,16 @@ namespace WebAPI.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Put(Guid id, [FromBody] GroupTest updatedGroupTest)
         {
-            var GroupTest = await _context.GroupTests.FirstOrDefaultAsync(t => t.GroupTestId == id);
-            if (GroupTest == null)
+            var groupTest = await _context.GroupTests.FirstOrDefaultAsync(t => t.GroupTestId == id);
+            if (groupTest == null)
             {
                 return NotFound();
             }
 
             // Update properties
-            GroupTest.Name = updatedGroupTest.Name;
-            GroupTest.Description = updatedGroupTest.Description;
-            GroupTest.Sequence = updatedGroupTest.Sequence;
+            groupTest.Name = updatedGroupTest.Name;
+            groupTest.Description = updatedGroupTest.Description;
+            groupTest.Sequence = updatedGroupTest.Sequence;
 
             await _context.SaveChangesAsync();
             return NoContent();
@@ -66,13 +86,13 @@ namespace WebAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var GroupTest = await _context.GroupTests.FirstOrDefaultAsync(t => t.GroupTestId == id);
-            if (GroupTest == null)
+            var groupTest = await _context.GroupTests.FirstOrDefaultAsync(t => t.GroupTestId == id);
+            if (groupTest == null)
             {
                 return NotFound();
             }
 
-            _context.GroupTests.Remove(GroupTest);
+            _context.GroupTests.Remove(groupTest);
             await _context.SaveChangesAsync();
             return NoContent();
         }

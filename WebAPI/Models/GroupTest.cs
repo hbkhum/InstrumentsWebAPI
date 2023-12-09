@@ -11,6 +11,8 @@ namespace WebAPI.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public int Sequence { get; set; }
+        public Guid TestPlanId { get; set; }
+        public TestPlan? TestPlan { get; set; }
         public IEnumerable<Test>? Tests { get; set; }
     }
 }

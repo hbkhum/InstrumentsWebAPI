@@ -3,11 +3,12 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebAPI.Models;
 
-public class Test : AbstractTest
+public class TestPlan
 {
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public Guid TestId { get; set; }
-    public Guid GroupTestId { get; set; }
-    public GroupTest? GroupTest { get; set; }
+    public Guid TestPlanId { get; set; }
+    public string Name { set; get; }
+    public IEnumerable<GroupTest>? GroupTests { get; set; }
+
 }
